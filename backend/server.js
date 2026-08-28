@@ -20,18 +20,20 @@ connectDB();
 // --- Security middleware stack ---
 app.use(helmet()); // sets safe HTTP headers
 
-// Production-Hardened CORS Array: Whitelists all your live deployment routes 
-// to prevent cross-origin HTML 403 blocks from crashing your frontend JSON parser
-const allowedOrigins = [
-  process.env.CLIENT_URL,
-  'https://vercel.app',
-  'https://vercel.app'
-];
-
+// Production-Hardened Dynamic CORS Validation Middleware
+// Automatically approves explicit domains AND any dynamic subdomains ending in .vercel.app
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // Allows internal tools/server-to-server testing
-    if (allowedOrigins.includes(origin) || allowedOrigins.indexOf(origin) !== -1) {
+    // Allow internal machine requests (like server-to-server, curl, or Postman)
+    if (!origin) return callback(null, true);
+
+    const configuredClient = process.env.CLIENT_URL;
+
+    if (
+      origin === configuredClient || 
+      origin === 'https://vercel.app' || 
+      origin.endsWith('.vercel.app') // <-- Wildcard anchor: Auto-approves all Vercel URLs instantly!
+    ) {
       return callback(null, true);
     } else {
       return callback(new Error('Blocked by secure B2B enterprise CORS policy'));
