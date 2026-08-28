@@ -10,16 +10,21 @@ interface Lead {
   dealValue: number;
 }
 
+// 1. DYNAMIC PRODUCTION ROUTING CONFIGURATION
+// Next.js reads NEXT_PUBLIC_ variables directly on the client side in production.
+// If it's missing (like in local development), it smoothly falls back to localhost:5000.
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+
 export default function DashboardPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // 1. First, automatically log in with your generated resume profile to fetch a real JWT
     const fetchSessionAndData = async () => {
       try {
-        const authResponse = await fetch('http://localhost:5000/api/auth/login', {
+        // 2. Updated path to use the dynamic cloud production URL string variable
+        const authResponse = await fetch(`${BACKEND_URL}/api/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -34,18 +39,17 @@ export default function DashboardPage() {
           throw new Error(authData.message || 'Authentication failed');
         }
 
-        // 2. Take the verified token and request your isolated B2B leads data array
-        const leadsResponse = await fetch('http://localhost:5000/api/leads', {
+        // 3. Updated path to fetch the multi-tenant metrics stream from the active server
+        const leadsResponse = await fetch(`${BACKEND_URL}/api/leads`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${authData.token}` // Clears the middleware block!
+            'Authorization': `Bearer ${authData.token}`
           }
         });
 
         const leadsData = await leadsResponse.json();
         
-        // Handle array formatting variations based on your controller output
         if (Array.isArray(leadsData)) {
           setLeads(leadsData);
         } else if (leadsData.success && Array.isArray(leadsData.data)) {
@@ -73,7 +77,7 @@ export default function DashboardPage() {
             <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
               B2B Enterprise SaaS Dashboard
             </h1>
-            <p className="text-slate-400 text-sm mt-1">Multi-Tenant CRM Environment | Active Node.js Client</p>
+            <p className="text-slate-400 text-sm mt-1">Multi-Tenant CRM Environment | Live Remote Cluster</p>
           </div>
           <div className="bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs px-3 py-1.5 rounded-full font-mono font-medium">
             Role: Admin (RBAC-Active)
