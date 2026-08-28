@@ -1,0 +1,18 @@
+# Local Environment Keys
+.env
+.env.local
+.env.development.local
+
+# Dependency Packages (Crucial to ignore)
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# Next.js Build Output
+frontend/.next/
+frontend/out/
+
+# System Overheads
+.DS_Store
+Thumbs.db
+*.log
