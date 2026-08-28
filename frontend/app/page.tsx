@@ -13,7 +13,7 @@ interface Lead {
 // 1. DYNAMIC PRODUCTION ROUTING CONFIGURATION
 // Next.js reads NEXT_PUBLIC_ variables directly on the client side in production.
 // If it's missing (like in local development), it smoothly falls back to localhost:5000.
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5000';
+const BACKEND_URL = 'https://crm-dttz.onrender.com/';
 
 export default function DashboardPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
