@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { registerUser, loginUser } = require('./authController');
+const { loginUser } = require('./authController');
 
-router.post('/register', registerUser);
+// This must be exactly '/' or '/login' — do NOT include '/api/auth' here
 router.post('/login', loginUser);
 
 module.exports = router;
